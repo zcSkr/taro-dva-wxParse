@@ -11,8 +11,8 @@ if (process.env.npm_config_argv.indexOf("h5") > 0) {
 }
 
 const config = {
-  projectName: 'taro_zhihu_dva_wxparse',
-  date: '2018-12-14',
+  projectName: 'client',
+  date: '2018-8-26',
   designWidth: 750,
   deviceRatio: {
     '640': 2.34 / 2,
@@ -33,27 +33,56 @@ const config = {
         'transform-object-rest-spread'
       ]
     },
+    typescript: {
+      compilerOptions: {
+        allowSyntheticDefaultImports: true,
+        baseUrl: '.',
+        declaration: false,
+        experimentalDecorators: true,
+        jsx: 'preserve',
+        jsxFactory: 'Nerv.createElement',
+        module: 'commonjs',
+        moduleResolution: 'node',
+        noImplicitAny: false,
+        noUnusedLocals: true,
+        outDir: './dist/',
+        preserveConstEnums: true,
+        removeComments: false,
+        rootDir: '.',
+        sourceMap: true,
+        strictNullChecks: true,
+        target: 'es6'
+      },
+      include: [
+        'src/**/*'
+      ],
+      exclude: [
+        'node_modules'
+      ],
+      compileOnSave: false
+    }
   },
   defineConstants: {
   },
-  // 小程序端专用配置
+  copy: {
+     patterns: [
+    ],
+    options: {
+    }
+  },
   weapp: {
     module: {
       postcss: {
         autoprefixer: {
           enable: true
         },
-        // 小程序端样式引用本地资源内联配置
         url: {
           enable: true,
-          config: {
-            limit: 10240
-          }
+          limit: 10240
         }
       }
     }
   },
-  // H5 端专用配置
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
@@ -63,11 +92,6 @@ const config = {
           enable: true
         }
       }
-    },
-    // 自定义 webpack 配置
-    webpackChain: {},
-    devServer: {
-      port: 8000
     }
   }
 }

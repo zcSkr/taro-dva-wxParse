@@ -1,113 +1,82 @@
-import Taro, { Component } from '@tarojs/taro'
-import { View,ScrollView,Input,Image} from '@tarojs/components'
+import Taro, {Component} from '@tarojs/taro'
+import {View, ScrollView, Input, Image} from '@tarojs/components'
 import './index.scss'
 import Feed from '../../components/feed/feed'
 import searchPng from '../../asset/images/search.png'
 import lightingPng from '../../asset/images/lighting.png'
+import {create} from 'dva-core';
+import {connect} from '@tarojs/redux'
+import action from '../../utils/action'
 
+@connect(({feeds, loading}) => ({
+  ...feeds,
+  isLoad: loading.effects["feeds/load"],
+  isLoadMore: loading.effects["feeds/loadMore"],
+}))
 export default class Index extends Component {
   config = {
-    navigationBarTitleText: '首页'
-  }
+    navigationBarTitleText: '首页',
+    enablePullDownRefresh: true,
+    backgroundTextStyle: "dark",
+  };
+
   constructor() {
-    super(...arguments)
-    this.state = {
-      loading:true,
-      list:[]
-    }
+    super(...arguments);
   }
-  componentDidMount () {
-    // 获取远程数据
-    Taro.showLoading({ title: '加载中' })
-    Taro.request({
-      url: 'https://easy-mock.com/mock/5b21d97f6b88957fa8a502f2/example/feed'
-    }).then(res => {
-      Taro.hideLoading()
-      if (res.data.success) {
-        this.setState({
-          loading: false,
-          list: res.data.data
-        })
-      }
-    })
-  }
+
+  componentDidMount = () => {
+    this.props.dispatch(action("feeds/load"));
+  };
+
+  onPullDownRefresh = () => {
+    this.props.dispatch(action("feeds/load"));
+  };
+
+  onReachBottom = () => {
+    this.props.dispatch(action("feeds/loadMore"));
+  };
+
   updateList = () => {
-    if (this.state.loading) {
-      return
-    }
-    this.state.loading = true
-    Taro.showLoading({title: '加载中'})
-    Taro.request({
-      url: 'https://easy-mock.com/mock/5b21d97f6b88957fa8a502f2/example/feed'
-    }).then(res => {
-      Taro.hideLoading()
-      if (res.data.success) {
-        this.setState({
-          loading:false,
-          list:res.data.data
-        })
-      }
-    })
-  }
-  appendNextPageList = () => {
-    if (this.state.loading) {
-      return
-    }
-    this.state.loading = true
-    Taro.showLoading({title: '加载中'})
-    Taro.request({
-      url: 'https://easy-mock.com/mock/5b21d97f6b88957fa8a502f2/example/feed'
-    }).then(res => {
-      Taro.hideLoading()
-      if (res.data.success) {
-        this.setState({
-          list: this.state.list.concat(res.data.data),
-          loading: false
-        })
-      }
-    })
-  }
-  render () {
+    this.props.dispatch(action("feeds/search",true));
+  };
+
+  render() {
+    const {list = [], isLoad, isLoadMore} = this.props;
     return (
-        <View>
+      <View>
         <View className='search flex-wrp'>
           <View className='search-left flex-item'>
             <View className='flex-wrp'>
               <View className='flex1'><Image src={searchPng}></Image></View>
-              <View className='flex6'><Input type='text' placeholder={'搜索话题, 问题或人'} placeholderClass='search-placeholder' /></View>
+              <View className='flex6'><Input type='text' placeholder={'搜索话题, 问题或人'}
+                                             placeholderClass='search-placeholder'/></View>
             </View>
           </View>
           <View className='search-right flex-item'>
             <Image onClick={this.updateList} src={lightingPng}></Image>
           </View>
         </View>
-        <ScrollView className='container'
-          scrollY
-          scrollWithAnimation
-          scrollTop='0'
-          lowerThreshold='10'
-          upperThreshold='10'
-          style='height:300px'
-          onScrollToUpper={this.updateList}
-          onScrollToLower={this.appendNextPageList}
-        >
-        {
-          this.state.loading
-          ? <View className='txcenter'>加载中</View>
-          : this.state.list.map(item => {
-            return <Feed
-              key={item}
-              feedSourceImg={item.feed_source_img}
-              feedSourceName={item.feed_source_name}
-              feedSourceTxt={item.feed_source_txt}
-              question={item.question}
-              answerCtnt={item.good_num}
-              goodNum={item.comment_num}
-              commentNum={item.commentNum}
-            />
-          })
-        }
-      </ScrollView>
+        <View className='container'>
+          {
+            list.length ?
+              list.map(item => {
+                return <Feed
+                  key={item}
+                  feed_source_img={item.feed_source_img}
+                  feed_source_name={item.feed_source_name}
+                  feed_source_txt={item.feed_source_txt}
+                  question={item.question}
+                  answer_ctnt={item.answer_ctnt}
+                  good_num={item.good_num}
+                  comment_num={item.comment_num}
+                />
+              }) :
+              isLoad ? <View>加载中...</View> : <View>没有数据</View>
+          }
+          {
+            isLoadMore && <View>加载中...</View>
+          }
+        </View>
       </View>
     )
   }

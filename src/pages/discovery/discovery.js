@@ -1,8 +1,9 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text,ScrollView,Image,Swiper,SwiperItem} from '@tarojs/components'
 import './discovery.scss'
-import Feed from '../../components/feed/feed'
+import Feed from '../../components/feed/feed.js'
 import ParseComponent from '../wxParse/wxParseComponent'
+
 import img1 from '../../asset/images/24213.jpg'
 import img2 from '../../asset/images/24280.jpg'
 import img3 from '../../asset/images/1444983318907-_DSC1826.jpg'
@@ -118,7 +119,6 @@ export default class Discovery extends Component {
             'comment_num': '18'
         }
       ],
-      html: '<h1>666</h1>',
     }
   }
   switchTab(index,e) {
@@ -136,9 +136,8 @@ export default class Discovery extends Component {
       // 这里 this.refs.input 访问到的是 `@tarojs/components` 的 `Input` 组件实例
     }
   }
-  
   render () {
-    // console.log(process.env.TARO_ENV)
+    console.log(process.env.TARO_ENV,66666)
     return (
       <View>
         <View className='top-tab flex-wrp flex-tab' >
@@ -166,13 +165,13 @@ export default class Discovery extends Component {
                 return (
                   <Feed
                     key={`dis_${index}`}
-                    feedSourceImg={item.feed_source_img}
-                    feedSourceName={item.feed_source_name}
-                    feedSourceTxt={item.feed_source_txt}
+                    feed_source_img={item.feed_source_img}
+                    feed_source_name={item.feed_source_name}
+                    feed_source_txt={item.feed_source_txt}
                     question={item.question}
-                    goodNum={item.good_num}
-                    commentNum={item.comment_num}
-                    answerCtnt={item.answer_ctnt} />
+                    good_num={item.good_num}
+                    comment_num={item.comment_num}
+                    answer_ctnt={item.answer_ctnt} />
                 )
               })}
           </View>

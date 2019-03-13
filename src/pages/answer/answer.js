@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
-import './answer.less'
+import './answer.scss'
 
 
 import img2 from '../../asset/images/good-bad.png'
